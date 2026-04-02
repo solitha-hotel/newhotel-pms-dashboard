@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&family=Tajawal:wght@400;700&display=swap');
+
+:root {
+    --bg-gradient: linear-gradient(135deg, #0f0c29 0%, #1a1040 40%, #24243e 100%);
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --card-border: rgba(255, 255, 255, 0.1);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --accent: #7c83fd;
+    --booking-color: #0071c2;
+    --agoda-color: #e5424d;
+    --almosafer-color: #00d166;
+    --gmail-color: #ea4335;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+}
+
+body {
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    direction: rtl;
+    overflow-x: hidden;
+}
+
+/* Layout */
+.container {
+    display: flex;
+    width: 100%;
+}
+
+.sidebar {
+    width: 350px;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(20px);
+    border-left: 1px solid var(--card-border);
+    padding: 2rem;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.main-content {
+    flex: 1;
+    padding: 3rem;
+}
+
+/* Typography & Headers */
+h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f64f59 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 3rem;
+}
+
+/* Platform Cards Grid */
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.platform-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.platform-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.platform-card.booking .border-bar { background: var(--booking-color); }
+.platform-card.agoda .border-bar { background: var(--agoda-color); }
+.platform-card.almosafer .border-bar { background: var(--almosafer-color); }
+.platform-card.gmail .border-bar { background: var(--gmail-color); }
+
+.border-bar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 5px;
+    height: 100%;
+    border-radius: 0 20px 20px 0;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.card-info h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.card-info p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.card-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.divider {
+    height: 1px;
+    background: var(--card-border);
+    margin: 1rem 0;
+}
+
+/* Status Indicator */
+.status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    width: fit-content;
+}
+
+.status.connected {
+    background: rgba(0, 209, 102, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(0, 209, 102, 0.3);
+}
+
+.status.disconnected {
+    background: rgba(229, 66, 77, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(229, 66, 77, 0.3);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+.connected .status-dot { background: #4ade80; box-shadow: 0 0 8px #4ade80; }
+.disconnected .status-dot { background: #f87171; box-shadow: 0 0 8px #f87171; }
+
+.last-tested {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    background: rgba(0, 0, 0, 0.2);
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: var(--accent);
+}
+
+.test-btn {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.test-btn:hover {
+    background: #6a71e5;
+    transform: translateY(-2px);
+}
+
+.test-btn:active {
+    transform: translateY(0);
+}
+
+/* Accordion in Sidebar */
+.accordion {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+
+.accordion-header {
+    padding: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.02);
+}
+
+.accordion-header:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.accordion-content {
+    padding: 1rem;
+    display: none;
+    border-top: 1px solid var(--card-border);
+}
+
+.accordion-content.active {
+    display: block;
+}
+
+/* Loading animation */
+.loader {
+    border: 2px solid rgba(255,255,255,0.1);
+    border-left-color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+    display: none;
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* Toast Notifications */
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+.toast {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--card-border);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    margin-top: 10px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateX(120%);
+    animation: slideIn 0.3s forwards;
+}
+@keyframes slideIn { to { transform: translateX(0); } }

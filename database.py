@@ -5,11 +5,12 @@
 import sqlite3
 import os
 import base64
-import streamlit as st
+from dotenv import load_dotenv
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
+load_dotenv()
 
 DB_PATH = "hotel_pms.db"
 KEY_FILE = ".secret.key"
@@ -17,10 +18,10 @@ KEY_FILE = ".secret.key"
 
 def _get_or_create_key() -> bytes:
     """الحصول على مفتاح التشفير أو إنشاء مفتاح جديد."""
-    # البحث في أسرار Streamlit أولاً
-    if "encryption_key" in st.secrets:
-        return st.secrets["encryption_key"].encode()
-        
+    # البحث في متغيرات البيئة (للنشر على Render)
+    env_key = os.getenv("ENCRYPTION_KEY")
+    if env_key:
+        return env_key.encode()
     if os.path.exists(KEY_FILE):
         with open(KEY_FILE, "rb") as f:
             return f.read()

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة الفندق - منصات الحجز</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <!-- الشريط الجانبي للإعدادات -->
+    <aside class="sidebar">
+        <h2 style="margin-bottom: 2rem;">⚙️ إعدادات المنصات</h2>
+        
+        <!-- Booking Form -->
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion('booking-form')">
+                <span>🌐 Booking.com</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content" id="booking-form">
+                <form onsubmit="submitForm(event, 'booking')">
+                    <div class="form-group">
+                        <label>Property ID</label>
+                        <input type="text" id="booking-user" required placeholder="مثال: 123456">
+                    </div>
+                    <div class="form-group">
+                        <label>API Key / Password</label>
+                        <input type="password" id="booking-pass" required placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label>رابط iCal</label>
+                        <input type="url" id="booking-ical" placeholder="https://admin.booking.com/hotel/hoteladmin/ical...">
+                    </div>
+                    <button type="submit" class="test-btn">
+                        <div class="loader" id="booking-loader"></div>
+                        <span>حفظ واختبار الاتصال</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Agoda Form -->
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion('agoda-form')">
+                <span>✈️ Agoda</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content" id="agoda-form">
+                <form onsubmit="submitForm(event, 'agoda')">
+                    <div class="form-group">
+                        <label>Hotel ID</label>
+                        <input type="text" id="agoda-user" required placeholder="مثال: 98765">
+                    </div>
+                    <div class="form-group">
+                        <label>API Key</label>
+                        <input type="password" id="agoda-pass" required placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label>رابط iCal</label>
+                        <input type="url" id="agoda-ical" placeholder="https://www.agoda.com/api/ical...">
+                    </div>
+                    <button type="submit" class="test-btn">
+                        <div class="loader" id="agoda-loader"></div>
+                        <span>حفظ واختبار الاتصال</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Almosafer Form -->
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion('almosafer-form')">
+                <span>🕌 Almosafer</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content" id="almosafer-form">
+                <form onsubmit="submitForm(event, 'almosafer')">
+                    <div class="form-group">
+                        <label>Property Key</label>
+                        <input type="text" id="almosafer-user" required placeholder="مثال: ALM-123">
+                    </div>
+                    <div class="form-group">
+                        <label>Token</label>
+                        <input type="password" id="almosafer-pass" required placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label>رابط iCal</label>
+                        <input type="url" id="almosafer-ical" placeholder="https://api.almosafer.com/ical...">
+                    </div>
+                    <button type="submit" class="test-btn">
+                        <div class="loader" id="almosafer-loader"></div>
+                        <span>حفظ واختبار الاتصال</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Gmail Form -->
+        <div class="accordion">
+            <div class="accordion-header" onclick="toggleAccordion('gmail-form')">
+                <span>📩 Gmail (App Password)</span>
+                <span>▼</span>
+            </div>
+            <div class="accordion-content" id="gmail-form">
+                <form onsubmit="submitForm(event, 'gmail')">
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="gmail-user" required placeholder="hotel@gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label>App Password (16 chars)</label>
+                        <input type="password" id="gmail-pass" required placeholder="xxxx xxxx xxxx xxxx">
+                    </div>
+                    <div class="form-group" style="display:none;">
+                        <input type="url" id="gmail-ical" value="">
+                    </div>
+                    <button type="submit" class="test-btn">
+                        <div class="loader" id="gmail-loader"></div>
+                        <span>حفظ واختبار الاتصال</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </aside>
+
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content">
+        <h1>🏨 مركز تحكم منصات الحجز</h1>
+        <p class="subtitle">إدارة وربط جميع منصات الحجز من مكان واحد (تطبيق FastAPI)</p>
+        
+        <h2 style="margin-bottom: 1.5rem; font-size: 1.5em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">🔗 حالة الاتصال بالمنصات</h2>
+        
+        <div class="cards-grid" id="cards-container">
+            <!-- Cards will be populated by JS -->
+        </div>
+    </main>
+</div>
+
+<div id="toast-container"></div>
+
+<script>
+    const platforms = {
+        booking: { id: 'booking', nameAr: 'بوكينج', nameEn: 'Booking.com', desc: 'منصة الحجز العالمية', emoji: '🌐' },
+        agoda: { id: 'agoda', nameAr: 'أجودا', nameEn: 'Agoda', desc: 'منصة الحجز الآسيوية', emoji: '✈️' },
+        almosafer: { id: 'almosafer', nameAr: 'المسافر', nameEn: 'Almosafer', desc: 'منصة الحجز المحلية', emoji: '🕌' },
+        gmail: { id: 'gmail', nameAr: 'جيميل', nameEn: 'Gmail', desc: 'البريد الإلكتروني للإشعارات', emoji: '📩' }
+    };
+
+    function toggleAccordion(id) {
+        document.getElementById(id).classList.toggle('active');
+    }
+
+    function showToast(message, isSuccess=true) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `${isSuccess ? '✅' : '❌'} ${message}`;
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    async function loadStatuses() {
+        try {
+            const res = await fetch('/api/statuses');
+            const data = await res.json();
+            renderCards(data);
+        } catch (err) {
+            console.error("Failed to load statuses", err);
+        }
+    }
+
+    function renderCards(statusData) {
+        const container = document.getElementById('cards-container');
+        container.innerHTML = '';
+        
+        for (const key in platforms) {
+            const p = platforms[key];
+            const dbInfo = statusData[key] || {is_connected: false, last_tested: ''};
+            
+            const statusClass = dbInfo.is_connected ? 'connected' : 'disconnected';
+            const statusText = dbInfo.is_connected ? 'متصل' : 'غير متصل';
+            const timeText = dbInfo.last_tested ? `🕐 آخر تحديث: ${dbInfo.last_tested}` : 'لم يختبر بعد';
+
+            const cardHtml = `
+                <div class="platform-card ${key}">
+                    <div class="border-bar"></div>
+                    <div class="card-header">
+                        <div class="card-info">
+                            <h3>${p.emoji} ${p.nameAr}</h3>
+                            <p>${p.nameEn} — ${p.desc}</p>
+                        </div>
+                        <div class="card-icon">${p.emoji}</div>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="status ${statusClass}">
+                        <div class="status-dot"></div>
+                        <span>${statusText}</span>
+                    </div>
+                    <div class="last-tested">${timeText}</div>
+                </div>
+            `;
+            container.innerHTML += cardHtml;
+        }
+    }
+
+    async function submitForm(e, platformName) {
+        e.preventDefault();
+        const user = document.getElementById(`${platformName}-user`).value;
+        const pass = document.getElementById(`${platformName}-pass`).value;
+        const ical = document.getElementById(`${platformName}-ical`)?.value || "";
+        
+        const loader = document.getElementById(`${platformName}-loader`);
+        loader.style.display = 'block';
+
+        try {
+            const res = await fetch('/api/save_and_test', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    platform_name: platformName,
+                    username: user,
+                    password: pass,
+                    ical_url: ical
+                })
+            });
+            const data = await res.json();
+            showToast(data.message, data.success);
+            loadStatuses(); // Refresh UI
+        } catch (err) {
+            showToast("حدث خطأ في الشبكة", false);
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+
+    // Load initial data
+    document.addEventListener('DOMContentLoaded', loadStatuses);
+</script>
+
+</body>
+</html>
