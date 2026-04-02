@@ -3,241 +3,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة الفندق - منصات الحجز</title>
+    <title>SaaS Hotel PMS Dashboard</title>
     <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<div class="container">
-    <!-- الشريط الجانبي للإعدادات -->
-    <aside class="sidebar">
-        <h2 style="margin-bottom: 2rem;">⚙️ إعدادات المنصات</h2>
+    <!-- الشريط الجانبي (Connectivity & Settings) -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <span class="logo-icon">✨</span>
+            <h2>سوليثا هوتيل</h2>
+        </div>
         
-        <!-- Booking Form -->
-        <div class="accordion">
-            <div class="accordion-header" onclick="toggleAccordion('booking-form')">
-                <span>🌐 Booking.com</span>
-                <span>▼</span>
-            </div>
-            <div class="accordion-content" id="booking-form">
-                <form onsubmit="submitForm(event, 'booking')">
-                    <div class="form-group">
-                        <label>Property ID</label>
-                        <input type="text" id="booking-user" required placeholder="مثال: 123456">
-                    </div>
-                    <div class="form-group">
-                        <label>API Key / Password</label>
-                        <input type="password" id="booking-pass" required placeholder="••••••••">
-                    </div>
-                    <div class="form-group">
-                        <label>رابط iCal</label>
-                        <input type="url" id="booking-ical" placeholder="https://admin.booking.com/hotel/hoteladmin/ical...">
-                    </div>
-                    <button type="submit" class="test-btn">
-                        <div class="loader" id="booking-loader"></div>
-                        <span>حفظ واختبار الاتصال</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Agoda Form -->
-        <div class="accordion">
-            <div class="accordion-header" onclick="toggleAccordion('agoda-form')">
-                <span>✈️ Agoda</span>
-                <span>▼</span>
-            </div>
-            <div class="accordion-content" id="agoda-form">
-                <form onsubmit="submitForm(event, 'agoda')">
-                    <div class="form-group">
-                        <label>Hotel ID</label>
-                        <input type="text" id="agoda-user" required placeholder="مثال: 98765">
-                    </div>
-                    <div class="form-group">
-                        <label>API Key</label>
-                        <input type="password" id="agoda-pass" required placeholder="••••••••">
-                    </div>
-                    <div class="form-group">
-                        <label>رابط iCal</label>
-                        <input type="url" id="agoda-ical" placeholder="https://www.agoda.com/api/ical...">
-                    </div>
-                    <button type="submit" class="test-btn">
-                        <div class="loader" id="agoda-loader"></div>
-                        <span>حفظ واختبار الاتصال</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Almosafer Form -->
-        <div class="accordion">
-            <div class="accordion-header" onclick="toggleAccordion('almosafer-form')">
-                <span>🕌 Almosafer</span>
-                <span>▼</span>
-            </div>
-            <div class="accordion-content" id="almosafer-form">
-                <form onsubmit="submitForm(event, 'almosafer')">
-                    <div class="form-group">
-                        <label>Property Key</label>
-                        <input type="text" id="almosafer-user" required placeholder="مثال: ALM-123">
-                    </div>
-                    <div class="form-group">
-                        <label>Token</label>
-                        <input type="password" id="almosafer-pass" required placeholder="••••••••">
-                    </div>
-                    <div class="form-group">
-                        <label>رابط iCal</label>
-                        <input type="url" id="almosafer-ical" placeholder="https://api.almosafer.com/ical...">
-                    </div>
-                    <button type="submit" class="test-btn">
-                        <div class="loader" id="almosafer-loader"></div>
-                        <span>حفظ واختبار الاتصال</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Gmail Form -->
-        <div class="accordion">
-            <div class="accordion-header" onclick="toggleAccordion('gmail-form')">
-                <span>📩 Gmail (App Password)</span>
-                <span>▼</span>
-            </div>
-            <div class="accordion-content" id="gmail-form">
-                <form onsubmit="submitForm(event, 'gmail')">
-                    <div class="form-group">
-                        <label>البريد الإلكتروني</label>
-                        <input type="email" id="gmail-user" required placeholder="hotel@gmail.com">
-                    </div>
-                    <div class="form-group">
-                        <label>App Password (16 chars)</label>
-                        <input type="password" id="gmail-pass" required placeholder="xxxx xxxx xxxx xxxx">
-                    </div>
-                    <div class="form-group" style="display:none;">
-                        <input type="url" id="gmail-ical" value="">
-                    </div>
-                    <button type="submit" class="test-btn">
-                        <div class="loader" id="gmail-loader"></div>
-                        <span>حفظ واختبار الاتصال</span>
-                    </button>
-                </form>
+        <div class="sidebar-section">
+            <h3>حالة الربط 🔗</h3>
+            <div class="conn-list" id="conn-list">
+                <!-- سيتم ملء البيانات هنا عبر JS -->
             </div>
         </div>
     </aside>
 
-    <!-- المحتوى الرئيسي -->
-    <main class="main-content">
-        <h1>🏨 مركز تحكم منصات الحجز</h1>
-        <p class="subtitle">إدارة وربط جميع منصات الحجز من مكان واحد (تطبيق FastAPI)</p>
+    <!-- المحتوى المرن الرئيسي -->
+    <div class="main-wrapper">
         
-        <h2 style="margin-bottom: 1.5rem; font-size: 1.5em; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">🔗 حالة الاتصال بالمنصات</h2>
-        
-        <div class="cards-grid" id="cards-container">
-            <!-- Cards will be populated by JS -->
-        </div>
-    </main>
-</div>
+        <!-- Navbar -->
+        <header class="top-nav">
+            <div class="nav-title">
+                <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+                <h1>لوحة التحكم <span>الرئيسية</span></h1>
+            </div>
+            <div class="nav-profile">
+                <span>المدير العام</span>
+                <img src="https://ui-avatars.com/api/?name=GH&background=D4AF37&color=0A192F" alt="Avatar">
+            </div>
+        </header>
 
-<div id="toast-container"></div>
-
-<script>
-    const platforms = {
-        booking: { id: 'booking', nameAr: 'بوكينج', nameEn: 'Booking.com', desc: 'منصة الحجز العالمية', emoji: '🌐' },
-        agoda: { id: 'agoda', nameAr: 'أجودا', nameEn: 'Agoda', desc: 'منصة الحجز الآسيوية', emoji: '✈️' },
-        almosafer: { id: 'almosafer', nameAr: 'المسافر', nameEn: 'Almosafer', desc: 'منصة الحجز المحلية', emoji: '🕌' },
-        gmail: { id: 'gmail', nameAr: 'جيميل', nameEn: 'Gmail', desc: 'البريد الإلكتروني للإشعارات', emoji: '📩' }
-    };
-
-    function toggleAccordion(id) {
-        document.getElementById(id).classList.toggle('active');
-    }
-
-    function showToast(message, isSuccess=true) {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.innerHTML = `${isSuccess ? '✅' : '❌'} ${message}`;
-        container.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
-    }
-
-    async function loadStatuses() {
-        try {
-            const res = await fetch('/api/statuses');
-            const data = await res.json();
-            renderCards(data);
-        } catch (err) {
-            console.error("Failed to load statuses", err);
-        }
-    }
-
-    function renderCards(statusData) {
-        const container = document.getElementById('cards-container');
-        container.innerHTML = '';
-        
-        for (const key in platforms) {
-            const p = platforms[key];
-            const dbInfo = statusData[key] || {is_connected: false, last_tested: ''};
-            
-            const statusClass = dbInfo.is_connected ? 'connected' : 'disconnected';
-            const statusText = dbInfo.is_connected ? 'متصل' : 'غير متصل';
-            const timeText = dbInfo.last_tested ? `🕐 آخر تحديث: ${dbInfo.last_tested}` : 'لم يختبر بعد';
-
-            const cardHtml = `
-                <div class="platform-card ${key}">
-                    <div class="border-bar"></div>
-                    <div class="card-header">
-                        <div class="card-info">
-                            <h3>${p.emoji} ${p.nameAr}</h3>
-                            <p>${p.nameEn} — ${p.desc}</p>
-                        </div>
-                        <div class="card-icon">${p.emoji}</div>
-                    </div>
-                    <div class="divider"></div>
-                    <div class="status ${statusClass}">
-                        <div class="status-dot"></div>
-                        <span>${statusText}</span>
-                    </div>
-                    <div class="last-tested">${timeText}</div>
+        <!-- Hero Stats (بيانات وهمية للعرض) -->
+        <section class="hero-stats">
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-details">
+                    <p>إجمالي حجوزات اليوم</p>
+                    <h3>+15 <small style="font-size:0.8rem; color:var(--success)">▲ 12%</small></h3>
                 </div>
-            `;
-            container.innerHTML += cardHtml;
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏨</div>
+                <div class="stat-details">
+                    <p>نسبة الإشغال</p>
+                    <h3>85%</h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-details">
+                    <p>الأرباح المتوقعة</p>
+                    <h3>45,000 ريال</h3>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🧹</div>
+                <div class="stat-details">
+                    <p>غرف تحتاج تنظيف</p>
+                    <h3 style="color:var(--warning)">12 غرفة</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- القسم السفلي: الرسم البياني + جدول الحجوزات -->
+        <section class="dashboard-grid">
+            
+            <!-- جدول الحجوزات القادمة -->
+            <div class="widget">
+                <div class="widget-header">
+                    <h2>📋 ملخص الحجوزات القادمة</h2>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>اسم الضيف</th>
+                                <th>منصة الحجز</th>
+                                <th>الدخول ➔ الخروج</th>
+                                <th>حالة الدفع</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>أحمد عبدالله</td>
+                                <td>
+                                    <div class="td-platform">
+                                        <span class="platform-badge pb-booking">Booking</span>
+                                    </div>
+                                </td>
+                                <td>15 مايو ➔ 18 مايو</td>
+                                <td><span class="badge paid">مؤكد الدفع</span></td>
+                            </tr>
+                            <tr>
+                                <td>سارة محمد</td>
+                                <td>
+                                    <div class="td-platform">
+                                        <span class="platform-badge pb-agoda">Agoda</span>
+                                    </div>
+                                </td>
+                                <td>16 مايو ➔ 20 مايو</td>
+                                <td><span class="badge pending">بانتظار الدفع</span></td>
+                            </tr>
+                            <tr>
+                                <td>خالد العتيبي</td>
+                                <td>
+                                    <div class="td-platform">
+                                        <span class="platform-badge pb-almosafer">Almosafer</span>
+                                    </div>
+                                </td>
+                                <td>16 مايو ➔ 17 مايو</td>
+                                <td><span class="badge paid">مؤكد الدفع</span></td>
+                            </tr>
+                            <tr>
+                                <td>جون سميث</td>
+                                <td>
+                                    <div class="td-platform">
+                                        <span class="platform-badge pb-booking">Booking</span>
+                                    </div>
+                                </td>
+                                <td>18 مايو ➔ 25 مايو</td>
+                                <td><span class="badge pending">التأكيد محلياً</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- الرسم البياني -->
+            <div class="widget" style="height: 350px; display: flex; flex-direction: column;">
+                <div class="widget-header">
+                    <h2>📈 أداء الحجوزات (آخر 7 أيام)</h2>
+                </div>
+                <div style="position: relative; flex-grow: 1; min-height: 0; width: 100%;">
+                    <canvas id="bookingsChart"></canvas>
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // تعريف المنصات
+        const platforms = {
+            booking: { id: 'booking', nameAr: 'بوكينج', nameEn: 'Booking.com', emoji: '🌐' },
+            agoda: { id: 'agoda', nameAr: 'أجودا', nameEn: 'Agoda', emoji: '✈️' },
+            almosafer: { id: 'almosafer', nameAr: 'المسافر', nameEn: 'Almosafer', emoji: '🕌' },
+            gmail: { id: 'gmail', nameAr: 'جيميل', nameEn: 'Gmail', emoji: '📩' }
+        };
+
+        // دالة الموبايل
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
         }
-    }
 
-    async function submitForm(e, platformName) {
-        e.preventDefault();
-        const user = document.getElementById(`${platformName}-user`).value;
-        const pass = document.getElementById(`${platformName}-pass`).value;
-        const ical = document.getElementById(`${platformName}-ical`)?.value || "";
-        
-        const loader = document.getElementById(`${platformName}-loader`);
-        loader.style.display = 'block';
+        // إظهار الرسائل المنبثقة
+        function showToast(message, isSuccess=true) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.borderRightColor = isSuccess ? 'var(--success)' : 'var(--danger)';
+            toast.innerHTML = `${isSuccess ? '✅' : '❌'} ${message}`;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
 
-        try {
-            const res = await fetch('/api/save_and_test', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    platform_name: platformName,
-                    username: user,
-                    password: pass,
-                    ical_url: ical
-                })
+        // فتح نموذج إدخال بيانات المنصة
+        function toggleForm(id) {
+            const form = document.getElementById(`form-${id}`);
+            form.classList.toggle('open');
+        }
+
+        // قلب واجهة التطبيق
+        async function loadStatuses() {
+            try {
+                const res = await fetch('/api/statuses');
+                const data = await res.json();
+                renderConnectivitySidebar(data);
+            } catch (err) {
+                console.error("Failed to load statuses");
+            }
+        }
+
+        // بناء الشريط الجانبي
+        function renderConnectivitySidebar(statusData) {
+            const container = document.getElementById('conn-list');
+            container.innerHTML = '';
+            
+            for (const key in platforms) {
+                const p = platforms[key];
+                const dbInfo = statusData[key] || {is_connected: false};
+                
+                const dotClass = dbInfo.is_connected ? 'online' : 'offline';
+                
+                const boxHtml = `
+                    <div class="conn-box">
+                        <div class="conn-item" onclick="toggleForm('${key}')">
+                            <div class="conn-info">
+                                <span class="conn-icon">${p.emoji}</span>
+                                <span class="conn-name">${p.nameEn}</span>
+                            </div>
+                            <!-- نبض الاتصال -->
+                            <div class="pulse-dot ${dotClass}" title="${dbInfo.is_connected ? 'متصل' : 'غير متصل'}"></div>
+                        </div>
+                        
+                        <!-- النموذج المخفي -->
+                        <div class="settings-form" id="form-${key}">
+                            <form onsubmit="submitForm(event, '${key}')">
+                                <div class="form-group">
+                                    <label>المعرف / ID</label>
+                                    <input type="text" id="${key}-user" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>كلمة المرور / Key</label>
+                                    <input type="password" id="${key}-pass" required>
+                                </div>
+                                ${key !== 'gmail' ? `
+                                <div class="form-group">
+                                    <label>رابط iCal</label>
+                                    <input type="url" id="${key}-ical">
+                                </div>` : `<input type="hidden" id="${key}-ical">`}
+                                <button type="submit" class="btn-primary">اختبار وحفظ</button>
+                            </form>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += boxHtml;
+            }
+        }
+
+        // إرسال البيانات
+        async function submitForm(e, platformName) {
+            e.preventDefault();
+            const user = document.getElementById(`${platformName}-user`).value;
+            const pass = document.getElementById(`${platformName}-pass`).value;
+            const ical = document.getElementById(`${platformName}-ical`)?.value || "";
+            
+            const btn = e.target.querySelector('button');
+            btn.innerText = 'جاري الاختبار...';
+            btn.style.opacity = '0.5';
+
+            try {
+                const res = await fetch('/api/save_and_test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ platform_name: platformName, username: user, password: pass, ical_url: ical })
+                });
+                const data = await res.json();
+                showToast(data.message, data.success);
+                loadStatuses(); // تحديث الأيقونات والنقرات
+            } catch (err) {
+                showToast("حدث خطأ في الشبكة", false);
+            } finally {
+                btn.innerText = 'اختبار وحفظ';
+                btn.style.opacity = '1';
+                toggleForm(platformName); // إغلاق النموذج
+            }
+        }
+
+        // تشغيل الرسوم البيانية Chart.js
+        function initChart() {
+            const ctx = document.getElementById('bookingsChart').getContext('2d');
+            
+            // تدرج لوني للرسم البياني
+            let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(212, 175, 55, 0.5)'); // خفيف ذهبي
+            gradient.addColorStop(1, 'rgba(10, 25, 47, 0)'); // شفاف محاكي للخلفية
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'],
+                    datasets: [{
+                        label: 'عدد الحجوزات الواردة',
+                        data: [4, 6, 5, 8, 12, 18, 15],
+                        borderColor: '#D4AF37', // Muted Gold
+                        backgroundColor: gradient,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#0A192F',
+                        pointBorderColor: '#D4AF37',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#8892B0' }
+                        },
+                        x: { 
+                            grid: { display: false },
+                            ticks: { color: '#8892B0', font: { family: 'Cairo' } }
+                        }
+                    }
+                }
             });
-            const data = await res.json();
-            showToast(data.message, data.success);
-            loadStatuses(); // Refresh UI
-        } catch (err) {
-            showToast("حدث خطأ في الشبكة", false);
-        } finally {
-            loader.style.display = 'none';
         }
-    }
 
-    // Load initial data
-    document.addEventListener('DOMContentLoaded', loadStatuses);
-</script>
+        // البدء
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStatuses();
+            initChart();
+        });
+    </script>
 
 </body>
 </html>

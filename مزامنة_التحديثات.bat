@@ -1,7 +1,6 @@
 @echo off
-chcp 65001 >nul
 echo ==============================================
-echo 🚀 جاري فحص التحديثات في الكود ومزامنتها مع السحابة...
+echo [Hotel PMS] Auto Sync to Github/Render...
 echo ==============================================
 
 set PATH=%PATH%;C:\Program Files\Git\cmd
@@ -12,6 +11,7 @@ git push origin main
 
 echo.
 echo ==============================================
-echo ✅ تمت المزامنة بنجاح! سيتم تحديث موقع Streamlit خلال ثوانٍ.
+echo SUCCESS! Your changes have been pushed.
+echo The website will update in a few seconds.
 echo ==============================================
 pause
